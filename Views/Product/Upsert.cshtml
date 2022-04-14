@@ -1,0 +1,108 @@
+﻿@model Rocky.Models.ViewModels.ProductVM;
+
+@{
+    var formType = "";
+    if (Model.Product.Id == 0)
+    {
+        formType = "Create";
+    }
+    else
+    {
+        formType = "Edit";
+    }
+    ViewData["Title"] = formType;
+}
+
+<h2>@formType</h2>
+<h4>Product</h4>
+<hr />
+<div class="row">
+    <div>
+        <form asp-action="Upsert" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (formType == "Edit")
+            {
+                <input type="hidden" asp-for="Product.Id" />
+                <div class="row">
+                    <div class="col-4 pt-4">
+                        <img src="@WC.ImagePath@Model.Product.Image" width="30%" />
+                    </div>
+                </div>
+            }
+
+            <div class="form-group">
+                <label asp-for="Product.Name" class="control-label"></label>
+                <input asp-for="Product.Name" class="form-control" />
+                <span asp-validation-for="Product.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.Description" class="control-label"></label>
+                <textarea asp-for="Product.Description" class="form-control" id="summernote" name="Product.Description"></textarea>
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.Price" class="control-label"></label>
+                <input asp-for="Product.Price" class="form-control" />
+                <span asp-validation-for="Product.Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.Image" class="control-label"></label>
+                <input asp-for="Product.Image" class="form-control" type="file" name="files" id="uploadBox" multiple value="" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.CategoryId" class="control-label"></label>
+                <select asp-for="Product.CategoryId" class="form-control" asp-items="@Model.CategoryList">
+                    <option disabled selected>Select Category</option>
+                </select>
+                <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.ApplicationId" class="control-label"></label>
+                <select asp-for="Product.ApplicationId" class="form-control" asp-items="@Model.ApplicationList">
+                    <option disabled selected>Select Application</option>
+                </select>
+                <span asp-validation-for="Product.Application" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="submit">@formType</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote({
+                height: 250
+            });
+        });
+        const submit = document.getElementById("submit");
+        const img = document.getElementById("uploadBox");
+        
+        submit.addEventListener("click", function (e) {
+            {
+                console.log(img.files.length)
+                if (submit.innerHTML === "Create" && img.files.length === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Please upload Product Images.',
+                    })
+                } else {
+                    submit.type = 'submit';
+                }
+
+            }
+        })
+    </script>
+
+   
+        @{
+            <partial name="_ValidationScriptsPartial" />
+        }
+   
+}
